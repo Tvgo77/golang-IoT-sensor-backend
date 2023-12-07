@@ -2,6 +2,8 @@ package main
 
 import (
 	"IoT-backend/server/configManager"
+	"IoT-backend/server/dataChannel"
+	"IoT-backend/server/sensorManager"
 	"fmt"
 )
 
@@ -14,10 +16,12 @@ func main() {
 	dummyUse(env)
 
 	/* Init Data channel */
-	// var channelMap = make(map[int]chan int)
+	var channelMap = make(dataChannel.ChannelMap)
+	dummyUse(channelMap)
 
 	/* Setup SensorManager */
-	// sensorServer := sensorManager.Setup(env, channelMap)
+	sensorServer := sensorManager.Setup(env, &channelMap)
+	dummyUse(sensorServer)
 
 	/* Setup UserManager */
 	// userServer := userManager.Setup(env, channelMap)
