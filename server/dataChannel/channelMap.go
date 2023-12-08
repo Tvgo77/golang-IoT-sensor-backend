@@ -6,28 +6,28 @@ import (
 
 type ChannelMap struct {
 	mu    sync.Mutex
-	table map[int]chan int
+	table map[string]chan int
 }
 
 func NewChannelMap() *ChannelMap {
 	return &ChannelMap{
-		table: make(map[int]chan int),
+		table: make(map[string]chan int),
 	}
 }
 
-func (chanMap *ChannelMap) Insert(serialNum int, ch chan int) {
+func (chanMap *ChannelMap) Insert(serialNum string, ch chan int) {
 	chanMap.mu.Lock()
 	chanMap.table[serialNum] = ch
 	chanMap.mu.Unlock()
 }
 
-func (chanMap *ChannelMap) Delete(serialNum int) {
+func (chanMap *ChannelMap) Delete(serialNum string) {
 	chanMap.mu.Lock()
 	delete(chanMap.table, serialNum)
 	chanMap.mu.Unlock()
 }
 
-func (chanMap *ChannelMap) GetChannel(serialNum int) chan int {
+func (chanMap *ChannelMap) GetChannel(serialNum string) chan int {
 	chanMap.mu.Lock()
 	ch := chanMap.table[serialNum]
 	chanMap.mu.Unlock()
