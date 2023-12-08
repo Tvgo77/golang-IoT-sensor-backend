@@ -16,11 +16,11 @@ func main() {
 	dummyUse(env)
 
 	/* Init Data channel */
-	var channelMap = make(dataChannel.ChannelMap)
+	var channelMap = dataChannel.NewChannelMap()
 	dummyUse(channelMap)
 
 	/* Setup SensorManager */
-	sensorServer := sensorManager.Setup(env, &channelMap)
+	sensorServer := sensorManager.Setup(env, channelMap)
 	dummyUse(sensorServer)
 
 	/* Setup UserManager */
