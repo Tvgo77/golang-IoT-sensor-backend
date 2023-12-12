@@ -1,11 +1,11 @@
 # golang-IoT-sensor-backend
 Sensor side:
     Sensors send real-time monitored data to server every 5 seconds when activated.
-    data format:
+    data format: every data frame has following fields
     {
-        "serialNum": "xxxxxx" (string)
-        "sensorVal": val (int[]) 
-        "time": time   
+        "serialNum": "xxxxxxxxxx" (First 10 bytes should be serial string)
+        "sensorVal": val (4 bytes for int value) 
+        "time": time  (Optional)
     }
 
 Server side:
