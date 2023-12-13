@@ -3,11 +3,14 @@ package userManager
 import (
 	"IoT-backend/server/configManager"
 	"IoT-backend/server/dataChannel"
+	"IoT-backend/server/userManager/api/route"
 	"IoT-backend/server/userManager/mongo"
 	"context"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type userServer struct {
@@ -26,10 +29,15 @@ func (s *userServer) Run() {
 	/* Database setup */
 	client := NewMongoDatabase(s.env)
 	db := client.Database(s.env.DBName)
-
 	dummy(db)
 
+	timeout := time.Duration(s.env.ContextTimeout) * time.Second
+	gin := gin.Default()
 	/* Router setup */
+	route.Setup(s.env, timeout, db, gin)
+
+	/* Run gin engine*/
+	gin.Run(fmt.Sprintf(":%d", s.env.ServerPort))
 }
 
 func NewMongoDatabase(env *configManager.Env) mongo.Client {
