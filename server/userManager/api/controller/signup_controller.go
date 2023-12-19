@@ -19,18 +19,21 @@ type SignupController struct {
 func (sc *SignupController) Signup(c *gin.Context) {
 	var request domain.SignupRequest
 
+	// Check request format
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
+	// Check if user already exist
 	_, err = sc.SignupUsecase.GetUserByEmail(c, request.Email)
 	if err == nil {
 		c.JSON(http.StatusConflict, domain.ErrorResponse{Message: "User already exists with the given email"})
 		return
 	}
 
+	// Generate bcrypted password
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(request.Password),
 		bcrypt.DefaultCost,
@@ -42,6 +45,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 
 	request.Password = string(encryptedPassword)
 
+	// Init user profile to be stored
 	user := domain.User{
 		ID:       primitive.NewObjectID(),
 		Name:     request.Name,
@@ -49,12 +53,14 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		Password: request.Password,
 	}
 
+	// Store user profile
 	err = sc.SignupUsecase.Create(c, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
+	// Generate Access token and Refresh token
 	accessToken, err := sc.SignupUsecase.CreateAccessToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
@@ -67,6 +73,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		return
 	}
 
+	// Send back token in http response
 	signupResponse := domain.SignupResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
