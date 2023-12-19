@@ -3,6 +3,7 @@ package route
 import (
 	"IoT-backend/server/configManager"
 	"IoT-backend/server/userManager/api/controller"
+	"IoT-backend/server/userManager/api/middleware"
 	"IoT-backend/server/userManager/domain"
 	"IoT-backend/server/userManager/mongo"
 	"IoT-backend/server/userManager/repository"
@@ -12,13 +13,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func dummy(any interface{}) {}
-
 func Setup(env *configManager.Env, timeout time.Duration, db mongo.Database,
 	gin *gin.Engine) {
 	// Public APIs
 	publicRouter := gin.Group("")
 	NewSignupRouter(env, timeout, db, publicRouter)
+	NewLoginRouter(env, timeout, db, publicRouter)
+	NewRefreshTokenRouter(env, timeout, db, publicRouter)
+
+	protectedRouter := gin.Group("")
+	protectedRouter.Use(middleware.JwtAuthMiddleware(env.AccessTokenSecret))
+
+	NewProfileRouter(env, timeout, db, protectedRouter)
 }
 
 func NewSignupRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
@@ -37,4 +43,21 @@ func NewLoginRouter(env *configManager.Env, timeout time.Duration, db mongo.Data
 		Env:          env,
 	}
 	group.POST("/login", lc.Login)
+}
+
+func NewRefreshTokenRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
+	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	rtc := &controller.RefreshTokenController{
+		RefreshTokenUsecase: usecase.NewRefreshTokenUsecase(ur, timeout),
+		Env:                 env,
+	}
+	group.POST("/refresh", rtc.RefreshToken)
+}
+
+func NewProfileRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
+	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	pc := &controller.ProfileController{
+		ProfileUsecase: usecase.NewProfileUsecase(ur, timeout),
+	}
+	group.GET("/profile", pc.Fetch)
 }
