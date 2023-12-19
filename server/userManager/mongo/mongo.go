@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"log"
 	"reflect"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 type Database interface {
 	Collection(string) Collection
 	Client() Client
+	Drop(context.Context) error
 }
 
 type Collection interface {
@@ -137,6 +139,14 @@ func (md *mongoDatabase) Collection(colName string) Collection {
 func (md *mongoDatabase) Client() Client {
 	client := md.db.Client()
 	return &mongoClient{cl: client}
+}
+
+func (md *mongoDatabase) Drop(ctx context.Context) error {
+	err := md.db.Drop(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return err
 }
 
 func (mc *mongoCollection) FindOne(ctx context.Context, filter interface{}) SingleResult {
