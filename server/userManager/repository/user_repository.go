@@ -72,9 +72,33 @@ func (ur *userRepository) GetByID(c context.Context, id string) (domain.User, er
 }
 
 func (ur *userRepository) AddSensor(c context.Context, id string, serialNum string) error {
-	return nil
+	collection := ur.database.Collection(ur.collection)
+	idHex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": idHex}
+	update := bson.M{"$addToSet": bson.M{"sensors": serialNum}}
+	_, err = collection.UpdateOne(c, filter, update)
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func (ur *userRepository) RemoveSensor(c context.Context, id string, serialNum string) error {
-	return nil
+	collection := ur.database.Collection(ur.collection)
+	idHex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": idHex}
+	update := bson.M{"$pull": bson.M{"sensors": serialNum}}
+	_, err = collection.UpdateOne(c, filter, update)
+	if err != nil {
+		return err
+	}
+	return err
 }
