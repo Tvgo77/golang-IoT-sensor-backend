@@ -51,6 +51,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: request.Password,
+		Sensors:  []string{},
 	}
 
 	// Store user profile
