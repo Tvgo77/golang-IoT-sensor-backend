@@ -61,3 +61,14 @@ func NewProfileRouter(env *configManager.Env, timeout time.Duration, db mongo.Da
 	}
 	group.GET("/profile", pc.Fetch)
 }
+
+/* Request for add or remove sensors */
+func NewUpdateSensorRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
+	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	usc := &controller.UpdateSensorController{
+		UpdateSensorUsecase: usecase.NewUpdateSensorUsecase(ur, timeout),
+	}
+	group.POST("/updateSensor", usc.UpdateSensor)
+}
+
+/* Request for acquire current sensor parameter */
