@@ -22,7 +22,7 @@ type Database interface {
 }
 
 type Collection interface {
-	FindOne(context.Context, interface{}) SingleResult
+	FindOne(context.Context, interface{}, ...*options.FindOneOptions) SingleResult
 	InsertOne(context.Context, interface{}) (interface{}, error)
 	InsertMany(context.Context, []interface{}) ([]interface{}, error)
 	DeleteOne(context.Context, interface{}) (int64, error)
@@ -149,8 +149,8 @@ func (md *mongoDatabase) Drop(ctx context.Context) error {
 	return err
 }
 
-func (mc *mongoCollection) FindOne(ctx context.Context, filter interface{}) SingleResult {
-	singleResult := mc.coll.FindOne(ctx, filter)
+func (mc *mongoCollection) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) SingleResult {
+	singleResult := mc.coll.FindOne(ctx, filter, opts[:]...)
 	return &mongoSingleResult{sr: singleResult}
 }
 

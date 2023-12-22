@@ -12,6 +12,7 @@ type Env struct {
 	ServerPort2            int    `mapstructure:"SERVER_PORT2"`
 	SensorPort             int    `mapstructure:"SENSOR_PORT"`
 	ContextTimeout         int    `mapstructure:"CONTEXT_TIMEOUT"`
+	SendInterval           int    `mapstructure:"SEND_INTERVAL"`
 	DBHost                 string `mapstructure:"DB_HOST"`
 	DBPort                 string `mapstructure:"DB_PORT"`
 	DBUser                 string `mapstructure:"DB_USER"`

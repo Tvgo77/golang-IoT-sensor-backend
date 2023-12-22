@@ -116,5 +116,23 @@ func (ur *userRepository) AddOneTimeToken(c context.Context, id string, token st
 	if err != nil {
 		return err
 	}
-	return err
+	return nil
+}
+
+func (ur *userRepository) GetTokenByID(c context.Context, id string) (string, error) {
+	collection := ur.database.Collection(ur.collection)
+	idHex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return "", err
+	}
+
+	var userToken domain.UserToken
+	filter := bson.M{"_id": idHex}
+	projection := bson.D{{Key: "email", Value: 1}, {Key: "_id", Value: 0}} // Include email, exclude _id
+	err = collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&userToken)
+	if err != nil {
+		return "", err
+	}
+
+	return userToken.OneTimeToken, err
 }
