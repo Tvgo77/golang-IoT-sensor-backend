@@ -25,6 +25,8 @@ func Setup(env *configManager.Env, timeout time.Duration, db mongo.Database,
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.AccessTokenSecret))
 
 	NewProfileRouter(env, timeout, db, protectedRouter)
+	NewUpdateSensorRouter(env, timeout, db, protectedRouter)
+	NewRequestSensorRouter(env, timeout, db, protectedRouter)
 }
 
 func NewSignupRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
@@ -72,3 +74,10 @@ func NewUpdateSensorRouter(env *configManager.Env, timeout time.Duration, db mon
 }
 
 /* Request for acquire current sensor parameter */
+func NewRequestSensorRouter(env *configManager.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
+	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	rsc := &controller.RequestSensorController{
+		RequestSensorUsecase: usecase.NewRequestSensorUsecase(ur, timeout),
+	}
+	group.GET("/requestSensor", rsc.RequestSensor)
+}

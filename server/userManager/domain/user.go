@@ -25,4 +25,5 @@ type UserRepository interface {
 	GetByID(c context.Context, id string) (User, error)
 	AddSensor(c context.Context, id string, serialNum string) error
 	RemoveSensor(c context.Context, id string, serialNum string) error
+	AddOneTimeToken(c context.Context, id string, token string) error
 }

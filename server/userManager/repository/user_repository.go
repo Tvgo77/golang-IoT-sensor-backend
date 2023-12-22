@@ -102,3 +102,19 @@ func (ur *userRepository) RemoveSensor(c context.Context, id string, serialNum s
 	}
 	return err
 }
+
+func (ur *userRepository) AddOneTimeToken(c context.Context, id string, token string) error {
+	collection := ur.database.Collection(ur.collection)
+	idHex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": idHex}
+	update := bson.M{"$set": bson.M{"oneTimeToken": token}}
+	_, err = collection.UpdateOne(c, filter, update)
+	if err != nil {
+		return err
+	}
+	return err
+}
