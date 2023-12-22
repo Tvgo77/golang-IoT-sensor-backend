@@ -31,6 +31,7 @@ func (rsc *RequestSensorController) RequestSensor(c *gin.Context) {
 	// Do response
 	requestSensorResponse := domain.RequestSensorResponse{
 		OneTimeToken: token,
+		UserID:       userID,
 	}
 
 	c.JSON(http.StatusOK, requestSensorResponse)

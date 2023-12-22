@@ -4,6 +4,7 @@ import "context"
 
 type RequestSensorResponse struct {
 	OneTimeToken string `json:"oneTimeToken"`
+	UserID       string `json:"userId"`
 }
 
 type RequestSensorUsecase interface {
