@@ -8,7 +8,8 @@ import (
 
 type Env struct {
 	AppEnv                 string `mapstructure:"APP_ENV"`
-	ServerPort             int    `mapstructure:"SERVER_PORT"`
+	ServerPort1            int    `mapstructure:"SERVER_PORT1"`
+	ServerPort2            int    `mapstructure:"SERVER_PORT2"`
 	SensorPort             int    `mapstructure:"SENSOR_PORT"`
 	ContextTimeout         int    `mapstructure:"CONTEXT_TIMEOUT"`
 	DBHost                 string `mapstructure:"DB_HOST"`

@@ -20,17 +20,22 @@ Server side:
     |   |   |-- OnData (push data to channel)
     |   |   \-- OnClose (delete the entry)
     |   
-    |-- DataChannelMap (serialNum(int): channel(chan))
+    |-- DataChannelMap (serialNum(string): channel(chan))
     |
     \-- UserManager
+        |-- ConnHandler (handler for direct tcp connection)
+        |   /* User profile manage system */
         |-- middleware
         |-- router
         |   |-- signup
         |   |-- login
-        |   \-- task
-        |       |-- addSensor
-        |       |-- deleteSensor
-        |       |-- getSensorVal
+        |   |-- refresh_token
+        |   |-- profile
+        |   |-- update_sensor
+        |   \-- sensor_data
+        |
+        |-- controller
+        |-- domain
         |-- usecase
         \-- repository
     
