@@ -21,6 +21,8 @@ type sensorNchan struct {
 	channel    chan int32
 }
 
+func dummy() {}
+
 func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap, env *configManager.Env, db mongo.Database) {
 	defer conn.Close()
 	ur := repository.NewUserRepository(db, domain.CollectionUser)
@@ -33,7 +35,7 @@ func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap, env *configManag
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(env.ContextTimeout))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(env.ContextTimeout)*time.Second)
 	defer cancel()
 
 	userID := string(buf[0:24])
@@ -57,24 +59,27 @@ func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap, env *configManag
 
 	// Send back all sensor data from channels
 	for {
-		for _, pair := range channels {
-			io.WriteString(conn, pair.sensor)
+		for idx := range channels {
+			io.WriteString(conn, channels[idx].sensor)
 			writeBuf := make([]byte, 4)
 
 			// Key Step of goroutine communication
 			select {
-			case <-pair.channel:
-				pair.channelVal = <-pair.channel
+			case <-channels[idx].channel:
+				channels[idx].channelVal = <-channels[idx].channel
 			default:
+				dummy()
 			}
 
-			binary.BigEndian.PutUint32(writeBuf, uint32(pair.channelVal))
-			_, err = conn.Write(writeBuf)
+			binary.BigEndian.PutUint32(writeBuf, uint32(channels[idx].channelVal))
+			_, err := conn.Write(writeBuf)
+
+			//fmt.Printf("Send value: %d, %d bytes\n", channels[idx].channelVal, num)
 			if err != nil {
-				log.Fatal(err)
+				fmt.Print(err)
 				return
 			}
 		}
-		time.Sleep(time.Duration(env.SendInterval))
+		time.Sleep(time.Duration(env.SendInterval) * time.Second)
 	}
 }

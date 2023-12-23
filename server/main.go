@@ -28,6 +28,6 @@ func main() {
 	userServer := userManager.Setup(env, channelMap)
 
 	/* Run */
-	// go sensorServer.Run()
+	go sensorServer.Run()
 	userServer.Run()
 }
