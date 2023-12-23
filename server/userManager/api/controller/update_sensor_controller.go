@@ -24,10 +24,13 @@ func (usc *UpdateSensorController) UpdateSensor(c *gin.Context) {
 	}
 
 	// Check it is Add or Remove operation and do update operation
-	if request.Operation == "ADD" {
+	if request.Operation == "add" {
 		err = usc.UpdateSensorUsecase.AddSensor(c, userId, request.SerialNum)
-	} else if request.Operation == "Remove" {
+	} else if request.Operation == "remove" {
 		err = usc.UpdateSensorUsecase.RemoveSensor(c, userId, request.SerialNum)
+	} else {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
 	}
 
 	if err != nil {

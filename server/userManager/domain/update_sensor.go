@@ -4,7 +4,7 @@ import "context"
 
 type UpdateSensorRequest struct {
 	SerialNum string `form:"serial" binding:"required"`
-	Operation string `form:"operation" binding:"requred"`
+	Operation string `form:"operation" binding:"required"`
 }
 
 type UpdateSensorResponse struct {
