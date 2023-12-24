@@ -30,6 +30,7 @@ func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap) {
 		if err != nil {
 			fmt.Printf("Bad data format from IP %s\n", conn.RemoteAddr().String())
 			channelMap.Delete(serialNum)
+			return
 		}
 		sensorVal := int32(binary.BigEndian.Uint32(buf))
 		sendLatest(sensorVal, ch)

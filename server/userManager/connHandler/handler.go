@@ -21,8 +21,6 @@ type sensorNchan struct {
 	channel    chan int32
 }
 
-func dummy() {}
-
 func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap, env *configManager.Env, db mongo.Database) {
 	defer conn.Close()
 	ur := repository.NewUserRepository(db, domain.CollectionUser)
@@ -65,10 +63,8 @@ func Handler(conn net.Conn, channelMap *dataChannel.ChannelMap, env *configManag
 
 			// Key Step of goroutine communication
 			select {
-			case <-channels[idx].channel:
-				channels[idx].channelVal = <-channels[idx].channel
+			case channels[idx].channelVal = <-channels[idx].channel:
 			default:
-				dummy()
 			}
 
 			binary.BigEndian.PutUint32(writeBuf, uint32(channels[idx].channelVal))
