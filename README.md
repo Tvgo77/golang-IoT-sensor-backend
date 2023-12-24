@@ -43,3 +43,7 @@ Server side:
 Client side:
     Add or delete monitoring sensors.
     Fetch realtime sensor data.
+
+Workflow:
+client signup -> client login -> client update sensor ->
+connect sensor to sensor server -> client request sensor -> client read sensor data
