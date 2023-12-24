@@ -47,3 +47,6 @@ Client side:
 Workflow:
 client signup -> client login -> client update sensor ->
 connect sensor to sensor server -> client request sensor -> client read sensor data
+
+The user manage framework is based on. 
+https://github.com/amitshekhariitbhu/go-backend-clean-architecture
